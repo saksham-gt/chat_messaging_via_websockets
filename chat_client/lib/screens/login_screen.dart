@@ -1,3 +1,5 @@
+import 'package:chat_client/global.dart';
+import 'package:chat_client/models/user_model.dart';
 import 'package:chat_client/screens/chat_users_screen.dart';
 import 'package:chat_client/widgets/text_input.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,17 @@ class LoginScreen extends StatelessWidget {
           const SizedBox(height: 15),
           TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, ChatUsersScreen.routeName);
+              final currUser = Global.dummyUsers.firstWhere(
+                  (user) => user.name == _loginController.text,
+                  orElse: () => User(id: '-1'));
+              if (currUser.id != '-1') {
+                Global.currentUser = currUser;
+                Global.setDummyChatUsers = currUser;
+                Navigator.pushNamed(context, ChatUsersScreen.routeName);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No user found!!')));
+              }
             },
             child: const Text(
               'Login',

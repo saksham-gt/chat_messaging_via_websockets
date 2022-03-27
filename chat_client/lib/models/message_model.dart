@@ -15,7 +15,7 @@ class MessageModel {
         to: json['to'],
       );
 
-  Map<String, dynamic> toJson(MessageModel msg) => {
+  static Map<String, dynamic> toJson(MessageModel msg) => {
         'to': msg.to,
         'from': msg.from,
         'message': msg.message,
