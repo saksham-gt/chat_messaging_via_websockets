@@ -1,8 +1,10 @@
 # Chat Messaging via WebSocket
 
-Integrating ChatMessaging via WebSocket (socket_io package) in Flutter Application
+Integrating ChatMessaging via WebSocket ([socket_io_client](https://pub.dev/packages/socket_io_client) package) in Flutter Application.
 
-To run this application, there are 3 parts :
+The server is also built in Dart. [socket_io](https://pub.dev/packages/socket_io) is used for server side socket integration.
+
+To run this application, there are 4 parts :
 
 **1. Running the server**
 
