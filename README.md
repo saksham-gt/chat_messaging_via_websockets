@@ -4,6 +4,13 @@ Integrating ChatMessaging via WebSocket ([socket_io_client](https://pub.dev/pack
 
 The server is also built in Dart. [socket_io](https://pub.dev/packages/socket_io) is used for server side socket integration.
 
+**Video:**
+
+
+https://user-images.githubusercontent.com/55953830/162538124-26303aeb-8642-4918-ae20-d9c412ad837c.mp4
+
+
+
 To run this application, there are 4 parts :
 
 **1. Running the server**
