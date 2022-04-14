@@ -1,7 +1,10 @@
 import 'package:chat_client/global.dart';
 import 'package:chat_client/models/message_model.dart';
+import 'package:chat_client/screens/user_profile_screen.dart';
+import 'package:chat_client/widgets/message_widget.dart';
 import 'package:chat_client/widgets/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 import '../models/user_model.dart';
 
@@ -32,7 +35,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   onReceiveHandler(data) {
     final receivedMesage = MessageModel.fromJson(data);
-    addToMessageList(receivedMesage);
+    print('Received Data: $data');
+    if (receivedMesage.from == toUser!.id) {
+      addToMessageList(receivedMesage);
+    }
   }
 
   @override
@@ -44,19 +50,34 @@ class _ConversationScreenState extends State<ConversationScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: Text(toUser == null ? 'null' : toUser!.name!),
+        title: GestureDetector(
+          child: Text(toUser == null ? 'null' : toUser!.name!),
+          onTap: () => Navigator.pushNamed(
+            context,
+            UserProfileScreen.routeName,
+            arguments: toUser,
+          ),
+        ),
       ),
       body: Column(children: [
         Expanded(
-            child: ListView.builder(
-          itemBuilder: ((context, index) => ListTile(
-                title: Text(
-                  messageList[index].message!,
-                  style: TextStyle(color: Colors.white),
-                ),
-              )),
-          itemCount: messageList.length,
-        )),
+          child: ListView.builder(
+            itemBuilder: ((context, index) => Row(children: [
+                  if (messageList[index].from == Global.currentUser!.id)
+                    Expanded(child: Container()),
+                  SwipeTo(
+                      onRightSwipe: () => print(
+                          'Message swiped right is: ${messageList[index].message}'),
+                      child: MessageWidget(
+                        index: index,
+                        messageList: messageList,
+                      )),
+                  if (messageList[index].from != Global.currentUser!.id)
+                    Expanded(child: Container()),
+                ])),
+            itemCount: messageList.length,
+          ),
+        ),
         inputMessage(_messageController)
       ]),
     );

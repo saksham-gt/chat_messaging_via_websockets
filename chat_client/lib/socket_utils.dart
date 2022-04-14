@@ -33,7 +33,6 @@ class SocketUtils {
   }
 
   receiveMessageListener(Function receiveMessageHandler) {
-    MessageModel message;
     socket!.on(ON_RECEIVE_MESSAGE, (data) => receiveMessageHandler(data));
   }
 
