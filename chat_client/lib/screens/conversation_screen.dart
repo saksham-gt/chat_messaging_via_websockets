@@ -1,8 +1,8 @@
 import 'package:chat_client/global.dart';
 import 'package:chat_client/models/message_model.dart';
 import 'package:chat_client/screens/user_profile_screen.dart';
+import 'package:chat_client/widgets/input_message.dart';
 import 'package:chat_client/widgets/message_widget.dart';
-import 'package:chat_client/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -30,9 +30,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   List<MessageModel> messageList = [];
   addToMessageList(MessageModel msg) {
-    setState(() {
-      messageList.add(msg);
-    });
+    if (mounted) {
+      setState(() {
+        messageList.add(msg);
+      });
+    }
   }
 
   onReceiveHandler(data) {
@@ -47,6 +49,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
     setState(() {
       replyMessage = msg;
     });
+  }
+
+  void cancelReply() {
+    print('Cancel Reply is called');
+    setState(() {
+      replyMessage = null;
+      print('Cancel Reply is being executed');
+    });
+    print('Cancel Reply is executed');
   }
 
   @override
@@ -78,7 +89,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     SwipeTo(
                         onRightSwipe: () {
                           replyToMessage(messageList[index]);
-                          print('isFocusNode null: ${focusNode == null}');
                           focusNode.requestFocus();
                         },
                         child: MessageWidget(
@@ -91,45 +101,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
               itemCount: messageList.length,
             ),
           ),
-          inputMessage(_messageController)
+          InputMessage(
+            onSendCallback: addToMessageList,
+            focusNode: focusNode,
+            controller: _messageController,
+            toUser: toUser!,
+            replyMessage: replyMessage,
+            onCancelReply: cancelReply,
+          )
         ]),
       ),
-    );
-  }
-
-  inputMessage(TextEditingController controller) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(left: 8, bottom: 6),
-            child: TextInputWidget(
-              focusNode: focusNode,
-              controller: controller,
-              hintText: 'Enter message',
-            ),
-          ),
-        ),
-        const SizedBox(width: 5),
-        IconButton(
-          onPressed: () {
-            final Map<String, dynamic> sendingMsg = MessageModel.toJson(
-                MessageModel(
-                    from: Global.currentUser!.id,
-                    to: toUser!.id!,
-                    message: controller.text));
-            Global.socket!.sendMessageHandler(sendingMsg);
-            addToMessageList(MessageModel(
-                from: Global.currentUser!.id,
-                to: toUser!.id!,
-                message: controller.text));
-          },
-          icon: const Icon(
-            Icons.send,
-            color: Colors.teal,
-          ),
-        )
-      ],
     );
   }
 }
