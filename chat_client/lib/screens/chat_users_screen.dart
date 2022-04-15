@@ -26,25 +26,29 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
   }
 
   onConnectListener(data) {
+    // ignore:avoid_print
     print('Connected');
   }
 
   onConnectError(data) {
+    // ignore:avoid_print
     print('onConnect Error : $data');
   }
 
   onConnectTimeout(data) {
+    // ignore:avoid_print
     print('onConnect timeout: $data');
   }
 
   onDisconnect(data) {
+    // ignore:avoid_print
     print('Disconnected');
   }
 
   @override
   void dispose() {
     Global.socket!.closeConnection();
-    if (_razorpay != null) _razorpay.clear();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -63,6 +67,7 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
   }
 
   _paymentSuccessHandler(PaymentSuccessResponse success) {
+    // ignore:avoid_print
     print('Payment Success : $success');
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(children: const [
@@ -79,6 +84,7 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
   }
 
   _paymentErrorHandler(PaymentFailureResponse failure) {
+    // ignore:avoid_print
     print('Payment Failure: $failure');
 
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -140,6 +146,7 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
             try {
               _razorpay.open(options);
             } catch (e) {
+              // ignore:avoid_print
               print('Error : ${e.toString()}');
             }
           },

@@ -1,4 +1,3 @@
-import 'package:chat_client/models/message_model.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'models/user_model.dart';
@@ -9,9 +8,13 @@ class SocketUtils {
   static String baseUrl = 'http://localhost';
   static String port = '3000';
 
+  //ignore:non_constant_identifier_names
   static String ON_CONNECTION = 'connection';
+  //ignore:non_constant_identifier_names
   static String ON_DISCONNECT = 'disconnect';
+  //ignore:non_constant_identifier_names
   static String ON_SEND_MESSAGE = 'send-message';
+  //ignore:non_constant_identifier_names
   static String ON_RECEIVE_MESSAGE = 'receive-message';
 
   static String connectUrl = '$baseUrl:$port';
@@ -38,6 +41,7 @@ class SocketUtils {
 
   sendMessageHandler(Map<String, dynamic> data) {
     socket!.emit(ON_SEND_MESSAGE, data);
+    //ignore:avoid_print
     print(data);
   }
 

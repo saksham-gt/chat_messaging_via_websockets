@@ -1,5 +1,4 @@
 import 'package:chat_client/socket_utils.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import 'models/user_model.dart';
 
 class Global {
@@ -47,6 +46,7 @@ class Global {
     dummyChatUsers = [];
     dummyChatUsers!.addAll(dummyUsers);
     dummyChatUsers!.removeWhere((iuser) => user == iuser);
+    //ignore:avoid_print
     print('Dummy chat users: ${dummyChatUsers!.length}');
   }
 

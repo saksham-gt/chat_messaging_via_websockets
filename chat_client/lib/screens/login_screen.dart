@@ -5,7 +5,7 @@ import 'package:chat_client/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
-  TextEditingController _loginController = TextEditingController();
+  final TextEditingController _loginController = TextEditingController();
   LoginScreen({Key? key}) : super(key: key);
 
   @override

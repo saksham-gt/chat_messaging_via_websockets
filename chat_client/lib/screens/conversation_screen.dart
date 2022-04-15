@@ -39,6 +39,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   onReceiveHandler(data) {
     final receivedMesage = MessageModel.fromJson(data);
+    // ignore:avoid_print
     print('Received Data: $data');
     if (receivedMesage.from == toUser!.id) {
       addToMessageList(receivedMesage);
@@ -52,12 +53,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   void cancelReply() {
-    print('Cancel Reply is called');
     setState(() {
       replyMessage = null;
-      print('Cancel Reply is being executed');
     });
-    print('Cancel Reply is executed');
   }
 
   @override
