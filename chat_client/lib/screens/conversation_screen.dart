@@ -19,6 +19,8 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   User? toUser;
+  final focusNode = FocusNode();
+  MessageModel? replyMessage;
 
   @override
   void initState() {
@@ -41,6 +43,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
+  replyToMessage(MessageModel msg) {
+    setState(() {
+      replyMessage = msg;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     toUser = ModalRoute.of(context)!.settings.arguments as User?;
@@ -59,27 +67,33 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ),
       ),
-      body: Column(children: [
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: ((context, index) => Row(children: [
-                  if (messageList[index].from == Global.currentUser!.id)
-                    Expanded(child: Container()),
-                  SwipeTo(
-                      onRightSwipe: () => print(
-                          'Message swiped right is: ${messageList[index].message}'),
-                      child: MessageWidget(
-                        index: index,
-                        messageList: messageList,
-                      )),
-                  if (messageList[index].from != Global.currentUser!.id)
-                    Expanded(child: Container()),
-                ])),
-            itemCount: messageList.length,
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Column(children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: ((context, index) => Row(children: [
+                    if (messageList[index].from == Global.currentUser!.id)
+                      Expanded(child: Container()),
+                    SwipeTo(
+                        onRightSwipe: () {
+                          replyToMessage(messageList[index]);
+                          print('isFocusNode null: ${focusNode == null}');
+                          focusNode.requestFocus();
+                        },
+                        child: MessageWidget(
+                          index: index,
+                          messageList: messageList,
+                        )),
+                    if (messageList[index].from != Global.currentUser!.id)
+                      Expanded(child: Container()),
+                  ])),
+              itemCount: messageList.length,
+            ),
           ),
-        ),
-        inputMessage(_messageController)
-      ]),
+          inputMessage(_messageController)
+        ]),
+      ),
     );
   }
 
@@ -90,6 +104,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           child: Container(
             margin: const EdgeInsets.only(left: 8, bottom: 6),
             child: TextInputWidget(
+              focusNode: focusNode,
               controller: controller,
               hintText: 'Enter message',
             ),
