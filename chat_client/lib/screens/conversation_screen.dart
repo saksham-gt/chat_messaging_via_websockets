@@ -1,8 +1,8 @@
 import 'package:chat_client/global.dart';
 import 'package:chat_client/models/message_model.dart';
 import 'package:chat_client/screens/user_profile_screen.dart';
+import 'package:chat_client/widgets/input_message.dart';
 import 'package:chat_client/widgets/message_widget.dart';
-import 'package:chat_client/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -19,6 +19,8 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   User? toUser;
+  final focusNode = FocusNode();
+  MessageModel? replyMessage;
 
   @override
   void initState() {
@@ -28,17 +30,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   List<MessageModel> messageList = [];
   addToMessageList(MessageModel msg) {
-    setState(() {
-      messageList.add(msg);
-    });
+    if (mounted) {
+      setState(() {
+        messageList.add(msg);
+      });
+    }
   }
 
   onReceiveHandler(data) {
     final receivedMesage = MessageModel.fromJson(data);
+    // ignore:avoid_print
     print('Received Data: $data');
     if (receivedMesage.from == toUser!.id) {
       addToMessageList(receivedMesage);
     }
+  }
+
+  replyToMessage(MessageModel msg) {
+    setState(() {
+      replyMessage = msg;
+    });
+  }
+
+  void cancelReply() {
+    setState(() {
+      replyMessage = null;
+    });
   }
 
   @override
@@ -59,62 +76,39 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ),
       ),
-      body: Column(children: [
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: ((context, index) => Row(children: [
-                  if (messageList[index].from == Global.currentUser!.id)
-                    Expanded(child: Container()),
-                  SwipeTo(
-                      onRightSwipe: () => print(
-                          'Message swiped right is: ${messageList[index].message}'),
-                      child: MessageWidget(
-                        index: index,
-                        messageList: messageList,
-                      )),
-                  if (messageList[index].from != Global.currentUser!.id)
-                    Expanded(child: Container()),
-                ])),
-            itemCount: messageList.length,
-          ),
-        ),
-        inputMessage(_messageController)
-      ]),
-    );
-  }
-
-  inputMessage(TextEditingController controller) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(left: 8, bottom: 6),
-            child: TextInputWidget(
-              controller: controller,
-              hintText: 'Enter message',
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Column(children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: ((context, index) => Row(children: [
+                    if (messageList[index].from == Global.currentUser!.id)
+                      Expanded(child: Container()),
+                    SwipeTo(
+                        onRightSwipe: () {
+                          replyToMessage(messageList[index]);
+                          focusNode.requestFocus();
+                        },
+                        child: MessageWidget(
+                          index: index,
+                          messageList: messageList,
+                        )),
+                    if (messageList[index].from != Global.currentUser!.id)
+                      Expanded(child: Container()),
+                  ])),
+              itemCount: messageList.length,
             ),
           ),
-        ),
-        const SizedBox(width: 5),
-        IconButton(
-          onPressed: () {
-            final Map<String, dynamic> sendingMsg = MessageModel.toJson(
-                MessageModel(
-                    from: Global.currentUser!.id,
-                    to: toUser!.id!,
-                    message: controller.text));
-            Global.socket!.sendMessageHandler(sendingMsg);
-            addToMessageList(MessageModel(
-                from: Global.currentUser!.id,
-                to: toUser!.id!,
-                message: controller.text));
-          },
-          icon: const Icon(
-            Icons.send,
-            color: Colors.teal,
-          ),
-        )
-      ],
+          InputMessage(
+            onSendCallback: addToMessageList,
+            focusNode: focusNode,
+            controller: _messageController,
+            toUser: toUser!,
+            replyMessage: replyMessage,
+            onCancelReply: cancelReply,
+          )
+        ]),
+      ),
     );
   }
 }

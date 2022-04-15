@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class TextInputWidget extends StatelessWidget {
   final TextEditingController? controller;
   final String? hintText;
+  final FocusNode? focusNode;
 
   const TextInputWidget({
     Key? key,
+    this.focusNode,
     this.controller,
     this.hintText,
   }) : super(key: key);
@@ -13,6 +15,7 @@ class TextInputWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      focusNode: focusNode,
       controller: controller,
       decoration: InputDecoration(
         border: OutlineInputBorder(
