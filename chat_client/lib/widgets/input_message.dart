@@ -52,16 +52,28 @@ class _InputMessageState extends State<InputMessage> {
       IconButton(
         onPressed: () {
           widget.onCancelReply();
-          final Map<String, dynamic> sendingMsg = MessageModel.toJson(
-              MessageModel(
-                  from: Global.currentUser!.id,
-                  to: widget.toUser.id!,
-                  message: widget.controller.text));
+          final Map<String, dynamic> sendingMsg =
+              MessageModel.toJson(MessageModel(
+            from: Global.currentUser!.id,
+            to: widget.toUser.id!,
+            message: widget.controller.text,
+            replyMsg: widget.replyMessage != null
+                ? widget.replyMessage!.message
+                : null,
+            replyMsgUserName:
+                widget.replyMessage != null ? widget.toUser.name : null,
+          ));
           Global.socket!.sendMessageHandler(sendingMsg);
           widget.onSendCallback(MessageModel(
-              from: Global.currentUser!.id,
-              to: widget.toUser.id!,
-              message: widget.controller.text));
+            from: Global.currentUser!.id,
+            to: widget.toUser.id!,
+            message: widget.controller.text,
+            replyMsg: widget.replyMessage != null
+                ? widget.replyMessage!.message
+                : null,
+            replyMsgUserName:
+                widget.replyMessage != null ? widget.toUser.name : null,
+          ));
         },
         icon: const Icon(
           Icons.send,
@@ -75,7 +87,7 @@ class _InputMessageState extends State<InputMessage> {
     return Container(
       margin: const EdgeInsets.only(left: 8, bottom: 2),
       decoration: BoxDecoration(
-          color: Colors.pinkAccent[100]!.withOpacity(0.8),
+          color: Colors.pink[200]!.withOpacity(0.8),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(5),
             topRight: Radius.circular(5),

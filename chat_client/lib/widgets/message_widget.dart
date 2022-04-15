@@ -26,7 +26,7 @@ class MessageWidget extends StatelessWidget {
                 ? Radius.zero
                 : const Radius.circular(5)),
         color: messageList![index!].from == Global.currentUser!.id
-            ? Colors.pinkAccent[100]
+            ? Colors.pink[200]
             : Colors.blueGrey[100],
       ),
       margin: EdgeInsets.only(
@@ -35,9 +35,69 @@ class MessageWidget extends StatelessWidget {
           top: 6,
           bottom: 6),
       width: MediaQuery.of(context).size.width * 0.75,
-      child: Text(
-        messageList![index!].message!,
-        style: const TextStyle(color: Colors.black, fontSize: 16),
+      child: messageList![index!].replyMsg != null
+          ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Container(
+                        color:
+                            messageList![index!].from != Global.currentUser!.id
+                                ? Colors.blueGrey
+                                : Colors.green[200],
+                        width: 4),
+                    const SizedBox(width: 10),
+                    ReplyMessageShow(
+                        replyMessage: messageList![index!].replyMsg,
+                        replyUserName: messageList![index!].replyMsgUserName),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                messageList![index!].message!,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ])
+          : Text(
+              messageList![index!].message!,
+              style: const TextStyle(color: Colors.black, fontSize: 16),
+            ),
+    );
+  }
+}
+
+class ReplyMessageShow extends StatelessWidget {
+  final String? replyMessage;
+  final String? replyUserName;
+  const ReplyMessageShow({
+    Key? key,
+    this.replyMessage,
+    this.replyUserName,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              replyUserName!,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+          ),
+          Text(
+            replyMessage!,
+            style: const TextStyle(
+                color: Colors.black54,
+                fontSize: 16,
+                overflow: TextOverflow.ellipsis),
+          ),
+          const SizedBox(height: 4),
+        ],
       ),
     );
   }

@@ -19,7 +19,7 @@ class ReplyMessageWidget extends StatelessWidget {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            Container(color: Colors.green, width: 4),
+            Container(color: Colors.green[300], width: 4),
             const SizedBox(width: 10),
             buildReplyMessage()
           ],
